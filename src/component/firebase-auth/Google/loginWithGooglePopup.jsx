@@ -1,12 +1,14 @@
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import React, { useState } from 'react';
 import { auth } from '../../../config/firebase-config';
+import Services from '../../services/services.component';
 import SignOut from './sign-out';
 
 const LoginWithGooglePopup = () => {
   const [isUserAuthenticated, setIsUserAuthenticated] = useState(
     false || window.localStorage.getItem('authorization') === 'true'
   );
+  const [token, setToken] = useState('');
   const loginWithGoogle = () => {
     const googleProvider = new GoogleAuthProvider();
     signInWithPopup(auth, googleProvider)
@@ -14,8 +16,10 @@ const LoginWithGooglePopup = () => {
         if (userCredentials) {
           setIsUserAuthenticated(true);
           window.localStorage.setItem('authorization', true);
+          userCredentials.user.getIdToken().then((token) => {
+            setToken(token);
+          });
         }
-        console.log(userCredentials);
       })
       .catch((err) => {
         console.log(err.message);
@@ -25,7 +29,7 @@ const LoginWithGooglePopup = () => {
     <div className="App">
       {isUserAuthenticated ? (
         <div>
-          <h1>HOME</h1>
+          <Services token={token} />
           <SignOut setIsUserAuthenticated={setIsUserAuthenticated} />
         </div>
       ) : (

@@ -7,6 +7,7 @@ const SignOut = ({ setIsUserAuthenticated }) => {
     signOut(auth)
       .then((res) => {
         setIsUserAuthenticated(false);
+        window.localStorage.setItem('authorization', false);
         console.log('signOut successfully!');
       })
       .catch((err) => {
